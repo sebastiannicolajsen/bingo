@@ -274,21 +274,21 @@
 
     }
 
+    const update = function () {
+      $(this).toggleClass("checked");
+      sessionStorage.setItem('storedGame',  $(".bingo-board").html())
+    };
+
     function createNewGame(load = true) {
       const existing = sessionStorage.getItem("storedGame");
       if(existing && load){
         $('.bingo-board').html(existing);
+        $(".bingo-box").on("click", update);  
       } else {
-        randomizeCells();
         $(".bingo-box").removeClass("checked");
+        randomizeCells();
+        location.reload();
       }
-
-      $(".bingo-box").on("click", function () {
-      $(this).toggleClass("checked");
-      sessionStorage.setItem('storedGame',  $(".bingo-board").html())
-    });
-
-     
         
     }
 
@@ -306,7 +306,7 @@
 
         //remove that index so no cell is duplicated
         cellsClone.splice(randIndex, 1);
-      });
+      })
       sessionStorage.setItem('storedGame',  $(".bingo-board").html())
     }
 
