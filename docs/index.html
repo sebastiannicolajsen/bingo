@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Music Bingo</title>
+    <meta name="description" content="Music Bingo with random songs" />
+    <meta name="author" content="Felix Qvist" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <style>
+      * {
+        font-family: "Oswald", sans-serif;
+      }
+
+      .bingo-board {
+        display: grid;
+        grid-template-columns: repeat(5, 20%);
+        grid-template-rows: repeat(5, 40%);
+        font-weight: 400;
+      }
+
+      .bingo-box {
+        padding: 0.5em;
+        border: 1px solid coral;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+      }
+
+      .bingo-box:hover {
+        cursor: pointer;
+      }
+
+      .bingo-box.checked {
+        background-color: #a82d00;
+      }
+
+      .btn-newsheet {
+        background-color: white;
+        border: none;
+      }
+      .btn-newsheet:hover {
+        background-color: coral;
+        cursor: pointer;
+      }
+
+      /* For Edge <16 */
+      .bingo-board {
+        display: -ms-grid;
+        -ms-grid-columns: 10% 10% 10% 10% 10%;
+        -ms-grid-rows: 10% 10% 10% 10% 10%;
+      }
+
+      .bingo-box:nth-child(2) {
+        -ms-grid-column: 2;
+      }
+
+      .bingo-box:nth-child(3) {
+        -ms-grid-column: 3;
+      }
+
+      .bingo-box:nth-child(4) {
+        -ms-grid-column: 4;
+      }
+
+      .bingo-box:nth-child(5) {
+        -ms-grid-column: 5;
+      }
+
+      .bingo-box:nth-child(6) {
+        -ms-grid-column: 1;
+        -ms-grid-row: 2;
+      }
+
+      .bingo-box:nth-child(7) {
+        -ms-grid-column: 2;
+        -ms-grid-row: 2;
+      }
+
+      .bingo-box:nth-child(8) {
+        -ms-grid-column: 3;
+        -ms-grid-row: 2;
+      }
+
+      .bingo-box:nth-child(9) {
+        -ms-grid-column: 4;
+        -ms-grid-row: 2;
+      }
+
+      .bingo-box:nth-child(10) {
+        -ms-grid-column: 5;
+        -ms-grid-row: 2;
+      }
+
+      .bingo-box:nth-child(11) {
+        -ms-grid-column: 1;
+        -ms-grid-row: 3;
+      }
+
+      .bingo-box:nth-child(12) {
+        -ms-grid-column: 2;
+        -ms-grid-row: 3;
+      }
+
+      .bingo-box:nth-child(13) {
+        -ms-grid-column: 3;
+        -ms-grid-row: 3;
+      }
+
+      .bingo-box:nth-child(14) {
+        -ms-grid-column: 4;
+        -ms-grid-row: 3;
+      }
+
+      .bingo-box:nth-child(15) {
+        -ms-grid-column: 5;
+        -ms-grid-row: 3;
+      }
+
+      
+
+    </style>
+  </head>
+
+  <body>
+    <div class="bingo-board m-4 text-sm">
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+      <div class="bingo-box"></div>
+    </div>
+    <button class="btn-newsheet" onclick="createNewGame(false)">New sheet</button>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+  </body>
+
+  <script>
+    const songs = [
+    [ "All I Want for Christmas Is You" , "Mariah Carey" ],
+[ "Santa Tell Me" , "Ariana Grande" ],
+[ "Rockin' Around The Christmas Tree" , "Brenda Lee" ],
+[ "It's Beginning to Look a Lot like Christmas" , "Michael Bublé" ],
+[ "Last Christmas" , "Wham!" ],
+[ "Feliz Navidad" , "José Feliciano" ],
+[ "Driving Home for Christmas" , "Chris Rea" ],
+[ "Santa Claus Is Coming To Town" , "The Jackson 5" ],
+[ "Mambo No. 5" , "Lou Bega" ],
+[ "Baby ,  It's Cold Outside (feat. Darren Criss)" ],
+[ "Silent Night" , "Nat King Cole" ],
+[ "Jingle Bell Rock" , "Bobby Helms" ],
+[ "Frosty The Snowman" , "Bing Crosby" ],
+[ "It's Raining Men" , "The Weather Girls" ],
+[ "I Saw Mommy Kissing Santa Claus" , "The Jackson 5" ],
+[ "Drummer Boy" , "Justin Bieber" ],
+[ "Eye of the Tiger" , "Survivor" ],
+[ "Let It Go" , "Idina Menzel" ],
+[ "Dancing in the Moonlight" , "Toploader" ],
+[ "Life is a Highway" , "Rascal Flatts" ],
+[ "Rockin' Around the Christmas Tree" , "Brenda Lee" ],
+[ "Wonderchild" , "Christian Walz" ],
+[ "Take On Me" , "a-ha" ],
+[ "Smells Like Teen Spirit" , "Nirvana" ],
+[ "Do You Want to Build a Snowman?" , "Kristen Bell" ],
+[ "Hey Ya!" , "Outkast" ],
+[ "ABC" , "The Jackson 5" ],
+[ "Video Killed The Radio Star" , "The Buggles" ],
+[ "A Little Less Conversation" , "Elvis Presley" ],
+[ "Tonttujen jouluyö" , "Joulupukki" ],
+[ "Personal Jesus" , "Depeche Mode" ],
+[ "Tu scendi dalle stelle" , "Anonymous" ],
+[ "I'll Be There for You" , "The Rembrandts" ],
+[ "Maniac" , "Michael Sembello" ],
+[ "Räven raskar över isen" , "Svenska Barnklassiker" ],
+[ "Pump Up the Jam" , "Technotronic" ],
+[ "Snow Candy" , "K.Will" ],
+[ "Benny Hill" , "The Edwin Davids Jazz Band" ],
+[ "Remember the Name" , "Fort Minor" ],
+[ "Just Can't Get Enough" , "Depeche Mode" ],
+[ "Ski-Twist" , "Hansi Hinterseer" ],
+[ "Flowers" , "Miley Cyrus" ],
+[ "Escapism." , "RAYE" ],
+[ "Prada" , "cassö" ],
+[ "As It Was" , "Harry Styles" ],
+[ "Cruel Summer" , "Taylor Swift" ],
+[ "Anti-Hero" , "Taylor Swift" ],
+[ "Unholy" , "Sam Smith" ],
+[ "Cupid" , "FIFTY FIFTY" ],
+[ "I Ain't Worried" , "OneRepublic" ],
+[ "Paint The Town Red" , "Doja Cat" ],
+[ "Miss You" , "Oliver Tree" ],
+[ "Can't Tame Her" , "Zara Larsson" ],
+[ "Speed Drive" , "Charli XCX" ],
+[ "greedy" , "Tate McRae" ],
+[ "Dance The Night" , "Dua Lipa" ],
+[ "Ferrari" , "James Hype" ],
+[ "Start of Something New" , "Troy" ],
+[ "Breaking Free" , "Troy" ],
+[ "Another Brick In The Wall", "Pink Floyd" ],
+[ "Beggin" , "Madcon" ],
+[ "Smooth Operator" , "Sade" ],
+[ "(It Goes Like) Nanana" , "Peggy Gou" ],
+[ "Strangers" , "Kenya Grace" ],
+[ "If We Ever Broke Up" , "Mae Stephens" ],
+[ "Pepas" , "Farruko" ],
+[ "Levitating" , "Dua Lipa" ],
+[ "Gold Digger" , "Kanye West" ],
+[ "Call Me Maybe" , "Carly Rae Jepsen" ],
+[ "Wannabe" , "Spice Girls" ],
+[ "Shake It Off" , "Taylor Swift" ],
+[ "Timber" , "Pitbull" ],
+[ "I Gotta Feeling" , "Black Eyed Peas" ],
+[ "Roar" , "Katy Perry" ],
+[ "Let's Get Loud" , "Jennifer Lopez" ],
+[ "Uptown Funk (feat. Bruno Mars)" , "Mark Ronson" ],
+[ "Hotel Room Service" , "Pitbull" ],
+[ "TiK ToK" , "Kesha" ],
+[ "I Wanna Dance with Somebody" , "Whitney Houston" ],
+[ "Stronger" , "Kelly Clarkson" ],
+[ "Poker Face" , "Lady Gaga" ],
+[ "Raise Your Glass" , "P!nk" ],
+[ "Believe" , "Cher" ],
+[ "Crazy In Love" , "Beyoncé" ],
+[ "Happy" , "Pharrell Williams" ],
+[ "You're Welcome" , "Dwayne Johnson" ],
+[ "Best Day Of My Life" , "American Authors" ],
+[ "Never Gonna Give You Up" , "Rick Astley" ],
+[ "Happy New Year" , "ABBA" ],
+[ "Burn" , "Ellie Goulding" ],
+
+    ];
+
+    function getRandom(arr, n) {
+      var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len);
+      if (n > len)
+        throw new RangeError("getRandom: more elements taken than available");
+      while (n--) {
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+      }
+      return result;
+    }
+
+    const cells = getRandom(songs, 15);
+
+    function newGame() {
+        if (confirm("Are you sure you want to start a new game?")) {
+          createNewGame();
+        }
+
+    }
+
+    function createNewGame(load = true) {
+      const existing = sessionStorage.getItem("storedGame");
+      if(existing && load){
+        $('.bingo-board').html(existing);
+      } else {
+        randomizeCells();
+        $(".bingo-box").removeClass("checked");
+      }
+
+      $(".bingo-box").on("click", function () {
+      $(this).toggleClass("checked");
+      sessionStorage.setItem('storedGame',  $(".bingo-board").html())
+    });
+
+     
+        
+    }
+
+    function randomizeCells() {
+      //don't want to lose the master, but need to be able to remove each item as it's used
+      let cellsClone = cells.slice(0);
+      $(".bingo-box").each(function (i, el) {
+        //get a random index from what's left in the cells array
+        const randIndex = Math.floor(Math.random() * (cellsClone.length - 1));
+
+        //pull out the text at that index and put it into the DOM
+        const [songName, artist] = cellsClone[randIndex];
+
+        el.innerHTML = `${songName}<br>🎵<br><small>${artist}</small>`;
+
+        //remove that index so no cell is duplicated
+        cellsClone.splice(randIndex, 1);
+      });
+      sessionStorage.setItem('storedGame',  $(".bingo-board").html())
+    }
+
+    window.onload = createNewGame();
+  </script>
+</html>
